@@ -34,7 +34,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GHSTACK_PAT }}
     - name: Land It!
       run: |
-        git config --global user.email "foo@foo.com"
+        git config --global user.email "horace@thinkingmachines.ai"
         git config --global user.name "ghstack bot"
         cat <<EOF > ~/.ghstackrc
         [ghstack]
