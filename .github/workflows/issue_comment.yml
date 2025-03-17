@@ -10,8 +10,8 @@ jobs:
     - name: Slash Command Dispatch - Repo - Write
       uses: peter-evans/slash-command-dispatch@v3
       with:
-        # token: ${{ secrets.GARDENER_PAT }}
-        # reaction-token: ${{ secrets.GARDENER_PAT }}
+        token: ${{ secrets.GHSTACK_PAT }}
+        reaction-token: ${{ secrets.GHSTACK_PAT }}
         issue-type: pull-request
         permission: write
         commands: |
