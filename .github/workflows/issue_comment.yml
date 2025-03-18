@@ -79,7 +79,7 @@ jobs:
           EOF
           ghstack land "${{ steps.get-pr.outputs.pr_url }}"
         env:
-          GITHUB_TOKEN: $${{ steps.app-token.outputs.token }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
 
       # - uses: actions/create-github-app-token@v1
       #   id: app-token
