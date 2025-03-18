@@ -33,7 +33,7 @@ jobs:
           PR_DATA=$(curl -s \
             -H "Authorization: token ${{ steps.app-token.outputs.token }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            "${{ github.api_url }}/repos/${{ github.repository }}/pulls/$PR_NUMBER")
+            "${{ github.api_url }}/${{ github.repository }}/pulls/$PR_NUMBER")
           
           # Extract useful information
           PR_HEAD_REF=$(echo "$PR_DATA" | jq -r .head.ref)
