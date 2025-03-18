@@ -22,6 +22,27 @@ jobs:
           EOF
       - name: Show Github Event Path Json
         run: 'cat $GITHUB_EVENT_PATH || true'
+      - name: Get PR details
+        id: get-pr
+        run: |
+          PR_NUMBER=${{ github.event.issue.number }}
+          echo "PR number is $PR_NUMBER"
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          
+          # Get PR details using GitHub API
+          PR_DATA=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "${{ github.api_url }}/repos/${{ github.repository }}/pulls/$PR_NUMBER")
+          
+          # Extract useful information
+          PR_HEAD_REF=$(echo "$PR_DATA" | jq -r .head.ref)
+          PR_HEAD_SHA=$(echo "$PR_DATA" | jq -r .head.sha)
+          
+          echo "pr_branch=$PR_HEAD_REF" >> $GITHUB_OUTPUT
+          echo "pr_sha=$PR_HEAD_SHA" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
       - uses: actions/checkout@v4
         with:
           token: ${{ steps.app-token.outputs.token }}
@@ -32,6 +53,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: 3.9
+          
       - name: Check Current CI Status
         run: |
           pip install requests ghstack
