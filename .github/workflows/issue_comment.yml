@@ -15,6 +15,18 @@ jobs:
         with:
           app-id: ${{ vars.APP_ID }}
           private-key: ${{ secrets.PRIVATE_KEY }}
+      - name: Add reaction to comment
+        run: |
+          COMMENT_ID=$(echo "${{ github.event.comment.id }}")
+          REPO="${{ github.repository }}"
+          
+          curl -X POST \
+            -H "Authorization: token ${{ github.token }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO/issues/comments/$COMMENT_ID/reactions" \
+            -d '{"content":"rocket"}'
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
       - name: Show Github Object
         run: |
           cat <<'EOF'
@@ -53,6 +65,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: 3.9
+        
           
       - name: Check Current CI Status
         run: |
