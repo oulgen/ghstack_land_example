@@ -75,7 +75,7 @@ jobs:
           github_username = chillee
           remote_name = origin
           EOF
-          ghstack land "${{ steps.get-pr.outputs.pr_branch }}"
+          ghstack land "${{ steps.get-pr.outputs.pr_url }}"
         env:
           GITHUB_TOKEN: $${{ steps.app-token.outputs.token }}
 
