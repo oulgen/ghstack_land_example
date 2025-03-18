@@ -65,7 +65,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
       - name: Land It!
         run: |
-          git config --global user.email "horace@thinkingmachines.ai"
+          git config --global user.email "bot@thinkingmachines.ai"
           git config --global user.name "ghstack bot"
           cat <<EOF > ~/.ghstackrc
           [ghstack]
