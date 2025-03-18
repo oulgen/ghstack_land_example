@@ -14,10 +14,10 @@ jobs:
         private-key: ${{ secrets.PRIVATE_KEY }}
     - name: Slash Command Dispatch - Repo - Write
       uses: peter-evans/slash-command-dispatch@v3
+      env:
+        GH_TOKEN: ${{ steps.app-token.outputs.token }}
       with:
         issue-type: pull-request
         permission: write
         commands: |
           land
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
