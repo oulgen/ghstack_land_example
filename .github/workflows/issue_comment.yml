@@ -70,12 +70,12 @@ jobs:
         run: |
           git config --global user.email "horace@thinkingmachines.ai"
           git config --global user.name "ghstack bot"
-          git remote set-url origin https://${{ steps.app-tokens.outputs.token }}@github.com/Chillee/ghstack_land_example.git
+          # git remote set-url origin https://${{ steps.app-tokens.outputs.token }}@github.com/Chillee/ghstack_land_example.git
           cat <<EOF > ~/.ghstackrc
           [ghstack]
           github_url = github.com
           github_oauth = $GITHUB_TOKEN
-          github_username = chillee
+          github_username = foo
           remote_name = origin
           EOF
           ghstack land "${{ steps.get-pr.outputs.pr_url }}"
