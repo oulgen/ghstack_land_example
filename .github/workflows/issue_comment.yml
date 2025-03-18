@@ -5,9 +5,9 @@ on:
 
 jobs:
   check_comments:
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/land') }}
     runs-on: ubuntu-latest
     steps:
-      if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/land') }}
       - name: Show Environment Variables
         run: env
       - uses: actions/create-github-app-token@v1
