@@ -19,11 +19,9 @@ def main():
             "X-GitHub-Api-Version": "2022-11-28",
         }
     )
-    PR = sys.argv[1]
+    NUMBER, head_ref = sys.argv[1], sys.argv[2]
     EV = json.loads(sys.stdin.read())
     REPO = EV["repository"]
-    PR = EV["event"]["client_payload"]["pull_request"]
-    NUMBER = PR["number"]
 
     def must(cond, msg):
         if not cond:
@@ -36,7 +34,6 @@ def main():
             )
             exit(1)
 
-    head_ref = PR["head"]["ref"]
     must(
         head_ref and re.match(r"^gh/[A-Za-z0-9-]+/[0-9]+/head$", head_ref),
         "Not a ghstack PR",
