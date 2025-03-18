@@ -31,7 +31,7 @@ jobs:
           
           # Get PR details using GitHub API
           PR_DATA=$(curl -s \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: token ${{ GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             "${{ github.api_url }}/repos/${{ github.repository }}/pulls/$PR_NUMBER")
           

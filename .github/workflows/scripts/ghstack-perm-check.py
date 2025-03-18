@@ -20,10 +20,9 @@ def main():
         }
     )
     PR = sys.argv[1]
-    print(f"PR {PR}")
     EV = json.loads(sys.stdin.read())
     REPO = EV["repository"]
-    print(EV["event"])
+    PR = EV["event"]["client_payload"]["pull_request"]
     NUMBER = PR["number"]
 
     def must(cond, msg):
