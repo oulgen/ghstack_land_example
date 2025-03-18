@@ -34,6 +34,7 @@ def main():
             )
             exit(1)
 
+    print(head_ref)
     must(
         head_ref and re.match(r"^gh/[A-Za-z0-9-]+/[0-9]+/head$", head_ref),
         "Not a ghstack PR",
