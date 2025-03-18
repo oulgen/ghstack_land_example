@@ -68,8 +68,8 @@ jobs:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
       - name: Land It!
         run: |
-          git config --global user.email "horace@thinkingmachines.ai"
-          git config --global user.name "ghstack bot"
+          # git config --global user.email "horace@thinkingmachines.ai"
+          # git config --global user.name "ghstack bot"
           cat <<EOF > ~/.ghstackrc
           [ghstack]
           github_url = github.com
@@ -77,7 +77,6 @@ jobs:
           github_username = chillee
           remote_name = origin
           EOF
-          cat ~/.ghstackrc
-          # ghstack land "${{ steps.get-pr.outputs.pr_url }}"
+          ghstack land "${{ steps.get-pr.outputs.pr_url }}"
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
