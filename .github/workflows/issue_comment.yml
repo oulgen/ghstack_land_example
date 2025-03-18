@@ -78,6 +78,6 @@ jobs:
           remote_name = origin
           EOF
           cat ~/.ghstackrc
-          ghstack land "${{ steps.get-pr.outputs.pr_url }}"
+          # ghstack land "${{ steps.get-pr.outputs.pr_url }}"
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
