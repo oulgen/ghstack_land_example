@@ -41,6 +41,8 @@ jobs:
           
           echo "pr_branch=$PR_HEAD_REF" >> $GITHUB_OUTPUT
           echo "pr_sha=$PR_HEAD_SHA" >> $GITHUB_OUTPUT
+          echo "pr_branch=$PR_HEAD_REF"
+          echo "pr_sha=$PR_HEAD_SHA"
       - uses: actions/checkout@v4
         with:
           token: ${{ steps.app-token.outputs.token }}
