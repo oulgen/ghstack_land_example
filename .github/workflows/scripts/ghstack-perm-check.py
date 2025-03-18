@@ -46,7 +46,7 @@ def main():
     must(os.system(f"git fetch origin {orig_ref}") == 0, "Can't fetch orig branch")
 
     proc = subprocess.Popen(
-        "git log FETCH_HEAD...$(git merge-base FETCH_HEAD origin/master)",
+        "git log FETCH_HEAD...$(git merge-base FETCH_HEAD origin/main)",
         stdout=subprocess.PIPE,
         shell=True,
     )
