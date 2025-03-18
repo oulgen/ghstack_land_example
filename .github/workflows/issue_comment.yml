@@ -41,6 +41,7 @@ jobs:
           
           echo "pr_branch=$PR_HEAD_REF" >> $GITHUB_OUTPUT
           echo "pr_sha=$PR_HEAD_SHA" >> $GITHUB_OUTPUT
+          echo "pr_url="${{ github.api_url }}/repos/${{ github.repository }}/pulls/$PR_NUMBER"
           echo "pr_branch=$PR_HEAD_REF"
           echo "pr_sha=$PR_HEAD_SHA"
       - uses: actions/checkout@v4
@@ -74,7 +75,7 @@ jobs:
           github_username = chillee
           remote_name = origin
           EOF
-          ghstack land "${{ github.event.client_payload.pull_request.html_url }}"
+          ghstack land "${{ steps.get-pr.outputs.pr_branch }}"
         env:
           GITHUB_TOKEN: $${{ steps.app-token.outputs.token }}
 
