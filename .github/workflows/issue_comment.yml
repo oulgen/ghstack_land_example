@@ -38,7 +38,7 @@ jobs:
           # Extract useful information
           PR_HEAD_REF=$(echo "$PR_DATA" | jq -r .head.ref)
           PR_HEAD_SHA=$(echo "$PR_DATA" | jq -r .head.sha)
-          PR_URL="${{ github.server_url }}/${{ github.repository }}/pulls/$PR_NUMBER"
+          PR_URL="${{ github.server_url }}/${{ github.repository }}/pull/$PR_NUMBER"
           
           echo "pr_branch=$PR_HEAD_REF" >> $GITHUB_OUTPUT
           echo "pr_sha=$PR_HEAD_SHA" >> $GITHUB_OUTPUT
