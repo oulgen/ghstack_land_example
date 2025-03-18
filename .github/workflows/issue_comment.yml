@@ -36,7 +36,7 @@ jobs:
         run: |
           pip install requests ghstack
           echo ${{ github.event.issue.number }}
-          .github/workflows/scripts/ghstack-perm-check.py <<'EOF'
+          .github/workflows/scripts/ghstack-perm-check.py ${{ github.event.issue.number }} <<'EOF'
           ${{ toJson(github) }}
           EOF
         env:
