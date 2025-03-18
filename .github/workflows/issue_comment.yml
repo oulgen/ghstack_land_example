@@ -77,21 +77,7 @@ jobs:
           github_username = chillee
           remote_name = origin
           EOF
+          cat ~/.ghstackrc
           ghstack land "${{ steps.get-pr.outputs.pr_url }}"
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-
-      # - uses: actions/create-github-app-token@v1
-      #   id: app-token
-      #   with:
-      #     app-id: ${{ vars.APP_ID }}
-      #     private-key: ${{ secrets.PRIVATE_KEY }}
-      # - name: Slash Command Dispatch - Repo - Write
-      #   uses: peter-evans/slash-command-dispatch@v3
-      #   with:
-      #     token: $${{ steps.app-token.outputs.token }}
-      #     # reaction-token: $${{ steps.app-token.outputs.token }}
-      #     issue-type: pull-request
-      #     permission: write
-      #     commands: |
-      #       land
