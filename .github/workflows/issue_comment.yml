@@ -21,12 +21,10 @@ jobs:
           REPO="${{ github.repository }}"
           
           curl -X POST \
-            -H "Authorization: token ${{ github.token }}" \
+            -H "Authorization: token ${{ steps.app-token.outputs.token }}" \
             -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/$REPO/issues/comments/$COMMENT_ID/reactions" \
             -d '{"content":"rocket"}'
-        env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
       - name: Show Github Object
         run: |
           cat <<'EOF'
