@@ -35,6 +35,7 @@ jobs:
       - name: Check Current CI Status
         run: |
           pip install requests ghstack
+          echo ${{ github.event.issue.number }}
           .github/workflows/scripts/ghstack-perm-check.py <<'EOF'
           ${{ toJson(github) }}
           EOF
