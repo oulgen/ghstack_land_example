@@ -58,6 +58,7 @@ def main():
         out.decode("utf-8"),
     )
     pr_numbers = list(map(int, pr_numbers))
+    print(pr_numbers)
     must(pr_numbers and pr_numbers[0] == NUMBER, "Extracted PR numbers not seems right!")
 
     for n in pr_numbers:
