@@ -39,7 +39,7 @@ jobs:
           ${{ toJson(github) }}
           EOF
         env:
-          GITHUB_TOKEN: $${{ steps.app-token.outputs.token }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
       - name: Land It!
         run: |
           git config --global user.email "horace@thinkingmachines.ai"
