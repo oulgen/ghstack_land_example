@@ -19,7 +19,7 @@ def main():
             "X-GitHub-Api-Version": "2022-11-28",
         }
     )
-    NUMBER, head_ref = sys.argv[1], sys.argv[2]
+    NUMBER, head_ref = int(sys.argv[1]), sys.argv[2]
     EV = json.loads(sys.stdin.read())
     REPO = EV["repository"]
 
