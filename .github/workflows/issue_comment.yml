@@ -1,10 +1,10 @@
-name: Slash Command Dispatch
+name: ghstack land
 on:
   issue_comment:
     types: [created]
 
 jobs:
-  check_comments:
+  ghstack_land:
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/land') }}
     runs-on: ubuntu-latest
     steps:
