@@ -41,7 +41,7 @@ jobs:
           
           echo "pr_branch=$PR_HEAD_REF" >> $GITHUB_OUTPUT
           echo "pr_sha=$PR_HEAD_SHA" >> $GITHUB_OUTPUT
-          echo "pr_url="${{ github.api_url }}/repos/${{ github.repository }}/pulls/$PR_NUMBER"
+          echo "pr_url='${{ github.api_url }}/repos/${{ github.repository }}/pulls/$PR_NUMBER'"
           echo "pr_branch=$PR_HEAD_REF"
           echo "pr_sha=$PR_HEAD_SHA"
       - uses: actions/checkout@v4
