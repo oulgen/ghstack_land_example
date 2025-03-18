@@ -22,10 +22,13 @@ jobs:
           EOF
       - name: Show Github Event Path Json
         run: 'cat $GITHUB_EVENT_PATH || true'
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           token: $${{ steps.app-token.outputs.token }}
+          ref: ${{ github.head_ref }}
           fetch-depth: '0'
+          # Make sure the value of GITHUB_TOKEN will not be persisted in repo's config
+          persist-credentials: false
       - uses: actions/setup-python@v4
         with:
           python-version: 3.9
