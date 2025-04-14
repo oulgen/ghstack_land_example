@@ -70,7 +70,6 @@ jobs:
           pip install requests ghstack
           echo ${{ github.event.issue.number }}
           .github/workflows/scripts/ghstack-perm-check.py ${{ github.event.issue.number }} ${{steps.get-pr.outputs.pr_branch}} ${{ github.repository }}
-          EOF
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
       - name: Land It!
