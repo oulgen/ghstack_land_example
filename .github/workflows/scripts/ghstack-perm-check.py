@@ -8,6 +8,8 @@ import subprocess
 import sys
 
 import requests
+import time
+
 
 
 def main():
@@ -19,9 +21,7 @@ def main():
             "X-GitHub-Api-Version": "2022-11-28",
         }
     )
-    NUMBER, head_ref = int(sys.argv[1]), sys.argv[2]
-    EV = json.loads(sys.stdin.read())
-    REPO = EV["repository"]
+    NUMBER, head_ref, REPO = int(sys.argv[1]), sys.argv[2], sys.argv[3]
 
     def must(cond, msg):
         if not cond:
@@ -60,44 +60,58 @@ def main():
     pr_numbers = list(map(int, pr_numbers))
     print(pr_numbers)
     must(pr_numbers and pr_numbers[0] == NUMBER, "Extracted PR numbers not seems right!")
-
+    
     for n in pr_numbers:
         print(f":: Checking PR status #{n}... ", end="")
-        resp = gh.get(f"https://api.github.com/repos/{REPO}/pulls/{n}")
-        must(resp.ok, "Error Getting PR Object!")
+        
+        # Get PR object with mergeable state
+        resp = gh.get(
+            f"https://api.github.com/repos/{REPO}/pulls/{n}",
+            headers={"Accept": "application/vnd.github.v3+json"}
+        )
+        must(resp.ok, f"Error getting PR #{n}!")
         pr_obj = resp.json()
-
-        resp = gh.get(f"https://api.github.com/repos/{REPO}/pulls/{NUMBER}/reviews")
-        must(resp.ok, "Error Getting PR Reviews!")
+        
+        # Check if GitHub is still calculating the mergeable state
+        mergeable_state = pr_obj.get("mergeable_state", "unknown")
+        if mergeable_state == "unknown":
+            # Wait and try again - GitHub is still calculating
+            time.sleep(2)
+            resp = gh.get(
+                f"https://api.github.com/repos/{REPO}/pulls/{n}",
+                headers={"Accept": "application/vnd.github.v3+json"}
+            )
+            must(resp.ok, f"Error getting PR #{n} on retry!")
+            pr_obj = resp.json()
+            mergeable_state = pr_obj.get("mergeable_state", "unknown")
+        
+        # Check mergeable state
+        must(
+            mergeable_state != "blocked", 
+            f"PR #{n} is blocked from merging (possibly failing status checks)!"
+        )
+        must(
+            mergeable_state != "dirty", 
+            f"PR #{n} has merge conflicts that need to be resolved!"
+        )
+        must(
+            mergeable_state != "unstable", 
+            f"PR #{n} has failing or pending required status checks!"
+        )
+        must(
+            mergeable_state == "clean", 
+            f"PR #{n} is not ready to merge (state: {mergeable_state})!"
+        )
+        
+        # If you still want to verify approval status specifically
+        resp = gh.get(f"https://api.github.com/repos/{REPO}/pulls/{n}/reviews")
+        must(resp.ok, f"Error getting reviews for PR #{n}!")
         reviews = resp.json()
-        idmap = {}
-        approved = True # TODO: REMOVE
-        for r in reviews:
-            s = r["state"]
-            if s not in ("COMMENTED",):
-                idmap[r["user"]["login"]] = r["state"]
-
-        for u, cc in idmap.items():
-            approved = approved or cc == "APPROVED"
-            must(
-                cc in ("APPROVED", "DISMISSED"),
-                f"@{u} has stamped PR #{n} `{cc}`, please resolve it first!",
-            )
-
-        must(approved, f"PR #{n} is not approved yet!")
-
-        resp = gh.get(f'https://api.github.com/repos/{REPO}/commits/{pr_obj["head"]["sha"]}/check-runs')
-        must(resp.ok, "Error getting check runs status!")
-        checkruns = resp.json()
-        for cr in checkruns["check_runs"]:
-            status = cr.get("conclusion", cr["status"])
-            name = cr["name"]
-            if name == "Copilot for PRs":
-                continue
-            must(
-                status in ("success", "neutral"),
-                f"PR #{n} check-run `{name}`'s status `{status}` is not success!",
-            )
+        
+        # Check if at least one approval exists
+        has_approval = any(review["state"] == "APPROVED" for review in reviews)
+        must(has_approval, f"PR #{n} has no approvals!")
+        
         print("SUCCESS!")
 
     print(":: All PRs are ready to be landed!")
