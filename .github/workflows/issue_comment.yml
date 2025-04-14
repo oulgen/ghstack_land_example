@@ -83,6 +83,9 @@ jobs:
           github_username = foo
           remote_name = origin
           EOF
-          ghstack land "${{ steps.get-pr.outputs.pr_url }}"
+          if ! ghstack land "${{ steps.get-pr.outputs.pr_url }}"; then
+            gh pr comment "${{ steps.get-pr.outputs.pr_url }}" --body "Failed to land PR using ghstack. See workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            exit 1
+          fi
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}

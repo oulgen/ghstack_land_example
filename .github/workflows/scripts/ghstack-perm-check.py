@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import json
 import os
 import re
 import subprocess
 import sys
-
-import requests
 import time
-
+import argparse
+import requests
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Check ghstack PR permissions and status')
+    parser.add_argument('pr_number', type=int, help='PR number to check')
+    parser.add_argument('head_ref', help='Head reference of the PR')
+    parser.add_argument('repo', help='Repository in owner/repo format')
+    
+    args = parser.parse_args()
+    
     gh = requests.Session()
     gh.headers.update(
         {
@@ -21,7 +26,7 @@ def main():
             "X-GitHub-Api-Version": "2022-11-28",
         }
     )
-    NUMBER, head_ref, REPO = int(sys.argv[1]), sys.argv[2], sys.argv[3]
+    NUMBER, head_ref, REPO = args.pr_number, args.head_ref, args.repo
 
     def must(cond, msg):
         if not cond:
@@ -60,10 +65,10 @@ def main():
     pr_numbers = list(map(int, pr_numbers))
     print(pr_numbers)
     must(pr_numbers and pr_numbers[0] == NUMBER, "Extracted PR numbers not seems right!")
-    
+
     for n in pr_numbers:
         print(f":: Checking PR status #{n}... ", end="")
-        
+
         # Get PR object with mergeable state
         resp = gh.get(
             f"https://api.github.com/repos/{REPO}/pulls/{n}",
@@ -71,7 +76,7 @@ def main():
         )
         must(resp.ok, f"Error getting PR #{n}!")
         pr_obj = resp.json()
-        
+
         # Check if GitHub is still calculating the mergeable state
         mergeable_state = pr_obj.get("mergeable_state", "unknown")
         if mergeable_state == "unknown":
@@ -84,34 +89,34 @@ def main():
             must(resp.ok, f"Error getting PR #{n} on retry!")
             pr_obj = resp.json()
             mergeable_state = pr_obj.get("mergeable_state", "unknown")
-        
+
         # Check mergeable state
         must(
-            mergeable_state != "blocked", 
+            mergeable_state != "blocked",
             f"PR #{n} is blocked from merging (possibly failing status checks)!"
         )
         must(
-            mergeable_state != "dirty", 
+            mergeable_state != "dirty",
             f"PR #{n} has merge conflicts that need to be resolved!"
         )
         must(
-            mergeable_state != "unstable", 
+            mergeable_state != "unstable",
             f"PR #{n} has failing or pending required status checks!"
         )
         must(
-            mergeable_state == "clean", 
+            mergeable_state == "clean",
             f"PR #{n} is not ready to merge (state: {mergeable_state})!"
         )
-        
+
         # If you still want to verify approval status specifically
         resp = gh.get(f"https://api.github.com/repos/{REPO}/pulls/{n}/reviews")
         must(resp.ok, f"Error getting reviews for PR #{n}!")
         reviews = resp.json()
-        
+
         # Check if at least one approval exists
-        # has_approval = any(review["state"] == "APPROVED" for review in reviews)
-        # must(has_approval, f"PR #{n} has no approvals!")
-        
+        has_approval = any(review["state"] == "APPROVED" for review in reviews)
+        must(has_approval, f"PR #{n} has no approvals!")
+
         print("SUCCESS!")
 
     print(":: All PRs are ready to be landed!")
